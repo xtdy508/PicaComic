@@ -124,6 +124,48 @@ class JmNetwork {
     loginFromAppdata();
   }
 
+  Future<int> selectURL() async {
+    var dio = Dio();
+    List<Future<int?>> futures = urls.map((url) async {
+      try {
+        var res = await dio.get(
+          "$url/login",
+          options: Options(
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.bytes,
+            followRedirects: false,
+            validateStatus: (_) => true,
+          ),
+        );
+
+        if (res.statusCode == 401) {
+          LogManager.addLog(LogLevel.info, "Network", "Auto-selected JM api domain: $url");
+          return urls.indexOf(url);
+        }
+      } on DioException catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+      } catch (e, s) {
+        if (kDebugMode) {
+          print(e);
+        }
+        LogManager.addLog(LogLevel.error, "Network", "$e\n$s");
+      }
+      return null;
+    }).toList();
+
+    List<int?> results = await Future.wait(futures);
+
+    for (var result in results) {
+      if (result != null) {
+        return result;
+      }
+    }
+
+    return -1;
+  }
+
   ///get请求, 返回Json数据中的data
   Future<Res<dynamic>> get(String url,
       {Map<String, String>? header,
@@ -583,6 +625,9 @@ class JmNetwork {
   }
 
   Future<Res<bool>> login(String account, String pwd) async {
+    if (appdata.settings[15] == "1") {
+      appdata.settings[17] = (await selectURL()).toString();
+    }
     _performingLogin = true;
     try {
       var res = await post("$baseUrl/login",

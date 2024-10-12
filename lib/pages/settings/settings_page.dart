@@ -372,6 +372,21 @@ class _SettingsPageState extends State<SettingsPage> implements PopEntry{
               width: 140,
             ),
           ),
+          if (appdata.settings[32] == "0" || appdata.settings[32] == "2")
+            ListTile(
+              leading: const Icon(Icons.remove_red_eye),
+              title: Text("纯黑色模式".tl),
+              trailing: Switch(
+                value: appdata.settings[84] == "1",
+                onChanged: (i) {
+                  setState(() {
+                    appdata.settings[84] = i ? "1" : "0";
+                  });
+                  appdata.updateSettings();
+                  MyApp.updater?.call();
+                },
+              ),
+            ),
           if (App.isAndroid)
             ListTile(
               leading: const Icon(Icons.smart_screen_outlined),

@@ -41,7 +41,7 @@ class MainActivity: FlutterFragmentActivity() {
                 }
         })
         //拦截屏幕截图
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger,"ccom.github.pacalini.pica_comic/screenshot").setMethodCallHandler{
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger,"com.github.pacalini.pica_comic/screenshot").setMethodCallHandler{
                 _, _ ->
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
@@ -79,7 +79,7 @@ class MainActivity: FlutterFragmentActivity() {
             if(call.method == "link") {
                 val intent = Intent(
                     android.provider.Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
-                    Uri.parse("package:ccom.github.pacalini.pica_comic"),
+                    Uri.parse("package:com.github.pacalini.pica_comic"),
                 )
                 startActivity(intent)
                 res.success(null)

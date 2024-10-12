@@ -1,9 +1,9 @@
 # Pica Comic
 
 [![flutter](https://img.shields.io/badge/flutter-3.24.1-blue)](https://flutter.dev/) 
-[![License](https://img.shields.io/github/license/wgh136/PicaComic)](https://github.com/wgh136/PicaComic/blob/master/LICENSE)
-[![Download](https://img.shields.io/github/v/release/wgh136/PicaComic)](https://github.com/wgh136/PicaComic/releases)
-[![stars](https://img.shields.io/github/stars/wgh136/PicaComic)](https://github.com/wgh136/PicaComic/stargazers)
+[![License](https://img.shields.io/github/license/Pacalini/PicaComic)](https://github.com/Pacalini/PicaComic/blob/master/LICENSE)
+[![Download](https://img.shields.io/github/v/release/Pacalini/PicaComic)](https://github.com/Pacalini/PicaComic/releases)
+[![stars](https://img.shields.io/github/stars/Pacalini/PicaComic)](https://github.com/Pacalini/PicaComic/stargazers)
 
 A comic app with multiple sources built with flutter.
 
@@ -11,7 +11,7 @@ A comic app with multiple sources built with flutter.
 
 1. Clone the repository
 ```shell
-git clone https://github.com/wgh136/PicaComic
+git clone https://github.com/Pacalini/PicaComic
 ```
 2. Install flutter: https://docs.flutter.dev/get-started/install
 3. Build Application: https://docs.flutter.dev/deployment

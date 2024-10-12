@@ -625,7 +625,7 @@ class _SettingsPageState extends State<SettingsPage> implements PopEntry{
         ListTile(
           leading: const Icon(Icons.code),
           title: Text("项目地址".tl),
-          onTap: () => launchUrlString("https://github.com/wgh136/PicaComic",
+          onTap: () => launchUrlString("https://github.com/Pacalini/PicaComic",
               mode: LaunchMode.externalApplication),
           trailing: const Icon(Icons.arrow_right),
         ),
@@ -633,24 +633,24 @@ class _SettingsPageState extends State<SettingsPage> implements PopEntry{
           leading: const Icon(Icons.comment_outlined),
           title: Text("提出建议(Github)".tl),
           onTap: () => launchUrlString(
-              "https://github.com/wgh136/PicaComic/issues",
+              "https://github.com/Pacalini/PicaComic/issues",
               mode: LaunchMode.externalApplication),
           trailing: const Icon(Icons.arrow_right),
         ),
-        ListTile(
-          leading: const Icon(Icons.email),
-          title: Text("通过电子邮件联系我".tl),
-          onTap: () => launchUrlString("mailto://nyne19710@proton.me",
-              mode: LaunchMode.externalApplication),
-          trailing: const Icon(Icons.arrow_right),
-        ),
-        ListTile(
-          leading: const Icon(Icons.telegram),
-          title: Text("加入Telegram群".tl),
-          onTap: () => launchUrlString("https://t.me/pica_group",
-              mode: LaunchMode.externalApplication),
-          trailing: const Icon(Icons.arrow_right),
-        ),
+        // ListTile(
+        //   leading: const Icon(Icons.email),
+        //   title: Text("通过电子邮件联系我".tl),
+        //   onTap: () => launchUrlString("mailto://nyne19710@proton.me",
+        //       mode: LaunchMode.externalApplication),
+        //   trailing: const Icon(Icons.arrow_right),
+        // ),
+        // ListTile(
+        //   leading: const Icon(Icons.telegram),
+        //   title: Text("加入Telegram群".tl),
+        //   onTap: () => launchUrlString("https://t.me/pica_group",
+        //       mode: LaunchMode.externalApplication),
+        //   trailing: const Icon(Icons.arrow_right),
+        // ),
         Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom))
       ],
     );

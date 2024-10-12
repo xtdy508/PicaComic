@@ -7,7 +7,22 @@
 
 A comic app with multiple sources built with flutter.
 
-## How to use
+Origin from wgh136/PicaComic
+
+Folked from [wgh136](https://github.com/wgh136/PicaComic), minimal fix & supported provided, no guaranteed roadmap.
+
+## Download
+
+<a href="https://github.com/Pacalini/PicaComic/releases">
+<img src="https://user-images.githubusercontent.com/69304392/148696068-0cfea65d-b18f-4685-82b5-329a330b1c0d.png"
+alt="Get it on GitHub" align="center" height="80" /></a>
+
+<a href="https://github.com/Pacalini/PicaComic/blob/master/INSTALL.md#obtainium">
+<img src="https://github.com/ImranR98/Obtainium/blob/main/assets/graphics/badge_obtainium.png"
+alt="Get it on Obtainium" align="center" height="54" />
+</a>
+
+## Build
 
 1. Clone the repository
 ```shell

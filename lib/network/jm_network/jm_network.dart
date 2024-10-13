@@ -82,10 +82,10 @@ class JmNetwork {
   static JmNetwork? cache;
 
   static const urls = <String>[
-    "https://www.jmeadpoolcdn.one",
-    "https://www.jmeadpoolcdn.life",
-    "https://www.jmapiproxyxxx.one",
-    "https://www.jmfreedomproxy.xyz"
+    "https://www.cdnxxx-proxy.vip",
+    "https://www.cdnxxx-proxy.xyz",
+    "https://www.cdnblackmyth.xyz",
+    "https://www.cdnxxx-proxy.co"
   ];
 
   String get baseUrl => urls[int.parse(appdata.settings[17])];
@@ -124,7 +124,7 @@ class JmNetwork {
     loginFromAppdata();
   }
 
-  Future<int> selectURL() async {
+  Future<int?> selectUrl() async {
     var dio = Dio();
     List<Future<int?>> futures = urls.map((url) async {
       try {
@@ -139,7 +139,6 @@ class JmNetwork {
         );
 
         if (res.statusCode == 401) {
-          LogManager.addLog(LogLevel.info, "Network", "Auto-selected JM api domain: $url");
           return urls.indexOf(url);
         }
       } on DioException catch (e) {
@@ -157,13 +156,13 @@ class JmNetwork {
 
     List<int?> results = await Future.wait(futures);
 
-    for (var result in results) {
-      if (result != null) {
-        return result;
+    for (var i in results) {
+      if (i != null) {
+        return i;
       }
     }
 
-    return -1;
+    return null;
   }
 
   ///get请求, 返回Json数据中的data
@@ -625,8 +624,13 @@ class JmNetwork {
   }
 
   Future<Res<bool>> login(String account, String pwd) async {
+
     if (appdata.settings[15] == "1") {
-      appdata.settings[17] = (await selectURL()).toString();
+      var i = await selectUrl();
+      if (i != null) {
+        appdata.settings[17] = i.toString();
+        LogManager.addLog(LogLevel.info, "Network", "Auto-selected JM api domain No.${i+1}");
+      }
     }
     _performingLogin = true;
     try {

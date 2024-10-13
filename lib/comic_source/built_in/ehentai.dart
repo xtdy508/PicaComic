@@ -256,8 +256,8 @@ class _EhGalleryTile extends ComicTile {
   }
 
   @override
-  int get maxLines =>
-      MediaQuery.of(App.globalContext!).size.width < 430 ? 1 : 2;
+  int get maxLines => 2;
+      // MediaQuery.of(App.globalContext!).size.width < 430 ? 1 : 2;
 
   @override
   ActionFunc? get read => () async {

@@ -723,32 +723,58 @@ void syncDataSettings(BuildContext context) {
 
 void setCacheLimit() {
   int size = appdata.appSettings.cacheLimit;
+  const minSize = 16;
+  bool isValid = true;
+  final TextEditingController controller = TextEditingController(text: size.toString());
   showDialog(
     context: App.globalContext!,
     useSafeArea: false,
-    builder: (context) => ContentDialog(
-      title: "设置缓存限制".tl,
-      content: TextField(
-        controller: TextEditingController(text: size.toString()),
-        keyboardType: TextInputType.number,
-        onChanged: (s) {
-          size = int.tryParse(s) ?? 500;
-        },
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          suffix: Text("MB"),
-        ),
-      ).paddingHorizontal(16),
-      actions: [
-        Button.filled(
-            child: Text("确认".tl),
-            onPressed: () {
-              appdata.appSettings.cacheLimit = size;
-              appdata.writeData();
-              CacheManager().setLimitSize(size);
-              App.globalBack();
-            }),
-      ],
+    builder: (context) => StatefulBuilder(
+      builder: (context, setState) {
+        return ContentDialog(
+          title: "设置缓存限制".tl,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: controller,
+                keyboardType: TextInputType.number,
+                onChanged: (s) {
+                  size = int.tryParse(s) ?? 500;
+                  setState(() {
+                    isValid = size < minSize ? false : true;
+                  });
+                },
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: isValid ? Colors.grey : Colors.red),
+                  ),
+                  suffix: const Text("MB"),
+                  errorText: isValid ? null : "${"不能小于".tl} $minSize MB",
+                ),
+              ).paddingHorizontal(16),
+            ],
+          ),
+          actions: [
+            Button.filled(
+              child: Text("确认".tl),
+              onPressed: () {
+                if (size < minSize) {
+                  setState(() {
+                    isValid = false;
+                  });
+                  return;
+                } else {
+                  appdata.appSettings.cacheLimit = size;
+                  appdata.writeData();
+                  CacheManager().setLimitSize(size);
+                  App.globalBack();
+                }
+              },
+            ),
+          ],
+        );
+      },
     ),
   );
 }

@@ -966,6 +966,7 @@
     "下载数据失败, 已禁用同步": "Failed to download data, sync disabled",
     "固定横屏": "Fixed landscape",
     "缓存限制": "Cache limit",
+    "不能小于": "Must not be less than",
     "导出不含下载的数据": "Export data without downloads",
     "导出所有数据": "Export all data",
     "如需还原之前的下载, 将路径填写为下载数据的位置, 并取消勾选转移数据": "To restore previous downloads, fill in the path as the location of the downloaded data, and uncheck the \"Transfer data\".",

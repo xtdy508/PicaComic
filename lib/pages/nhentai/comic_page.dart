@@ -53,7 +53,7 @@ class NhentaiComicPage extends BaseComicPage<NhentaiComic> {
       havePlatformFavorite: NhentaiNetwork().logged,
       needLoadFolderData: false,
       favoriteOnPlatform: data!.favorite,
-      initialFolder: "0",
+      initialFolder: NhentaiNetwork().logged ? "0" : null,
       localFavoriteItem: toLocalFavoriteItem(),
       setFavorite: (b) {
         if (favorite != b) {

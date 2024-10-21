@@ -1913,6 +1913,9 @@ class _FavoriteComicWidgetState extends State<FavoriteComicWidget> {
               widget.localFavoriteItem,
             );
           }
+          if (context.mounted) {
+            context.pop();
+          }
         },
         child: Text("取消收藏".tl),
       );

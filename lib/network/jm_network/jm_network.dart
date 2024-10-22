@@ -81,23 +81,22 @@ class JmNetwork {
 
   static JmNetwork? cache;
 
-  static const urls = <String>[
-    "https://www.cdnxxx-proxy.vip",
-    "https://www.cdnxxx-proxy.xyz",
-    "https://www.cdnblackmyth.xyz",
-    "https://www.cdnxxx-proxy.co"
-  ];
+  static List<String> get domains => appdata.appSettings.jmApiDomains;
 
-  String get baseUrl => urls[int.parse(appdata.settings[17])];
+  String get baseUrl => "https://${domains[int.parse(appdata.settings[17])]}";
+
+  static const domainUrl = 'https://jmapp-1308024008.cos.ap-singapore.myqcloud.com/server-2024.txt';
+  static const domainSecret = [100, 105, 111, 115, 102, 106, 99, 107, 119, 112, 113, 112, 100, 102, 106, 107, 118, 110, 113, 81, 106, 115, 105, 107];
 
   static const kJmSecret = '185Hcomic3PAPP7R';
 
   bool _performingLogin = false;
 
   ///解密数据
-  static String convertData(String input, int time) {
+  static String convertData(String input, [int? time]) {
+    String secret = time == null ? String.fromCharCodes(domainSecret) : "$time$kJmSecret";
     //key为时间+18comicAPPContent的md5结果
-    var key = md5.convert(const Utf8Encoder().convert("$time$kJmSecret"));
+    var key = md5.convert(const Utf8Encoder().convert(secret));
     BlockCipher cipher = ECBBlockCipher(AESEngine())
       ..init(false, KeyParameter(const Utf8Encoder().convert(key.toString())));
     //先将数据进行base64解码
@@ -124,12 +123,32 @@ class JmNetwork {
     loginFromAppdata();
   }
 
-  Future<int?> selectUrl() async {
+  Future<List<String>?> getDomains() async {
     var dio = Dio();
-    List<Future<int?>> futures = urls.map((url) async {
+    try {
+      var res = await dio.get(domainUrl);
+      var jsonData = json.decode(convertData(res.data)) as Map<String, dynamic>;
+      var urls = List<String>.from(jsonData['Server']);
+      return urls;
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    } catch (e, s) {
+      if (kDebugMode) {
+        print(e);
+      }
+      LogManager.addLog(LogLevel.error, "Network", "$e\n$s");
+    }
+    return null;
+  }
+
+  Future<int?> selectDomain() async {
+    var dio = Dio();
+    List<Future<int?>> futures = domains.map((domain) async {
       try {
         var res = await dio.get(
-          "$url/login",
+          "https://$domain/login",
           options: Options(
             contentType: Headers.jsonContentType,
             responseType: ResponseType.bytes,
@@ -139,7 +158,7 @@ class JmNetwork {
         );
 
         if (res.statusCode == 401) {
-          return urls.indexOf(url);
+          return domains.indexOf(domain);
         }
       } on DioException catch (e) {
         if (kDebugMode) {
@@ -626,10 +645,10 @@ class JmNetwork {
   Future<Res<bool>> login(String account, String pwd) async {
 
     if (appdata.settings[15] == "1") {
-      var i = await selectUrl();
+      var i = await selectDomain();
       if (i != null) {
         appdata.settings[17] = i.toString();
-        LogManager.addLog(LogLevel.info, "Network", "Auto-selected JM api domain No.${i+1}");
+        LogManager.addLog(LogLevel.info, "Network", "Selected JM API Stream ${i+1}: ${domains[i]}");
       }
     }
     _performingLogin = true;

@@ -20,6 +20,33 @@ class JmSettings extends StatefulWidget {
 
   @override
   State<JmSettings> createState() => _JmSettingsState();
+
+  static const builtInDomains = <String>[
+    "www.jmapiproxyxxx.vip",
+    "www.jmapiproxyxxx.me",
+    "www.cdnblackmyth.xyz",
+    "www.cdnxxx-proxy.co"
+  ];
+
+  static void updateApiDomains([bool showLoading = false]) async {
+    if (ComicSource.sources.isEmpty) {
+      return;
+    }
+    var controller = showLoading ? showLoadingDialog(App.globalContext!) : null;
+    List<String>? domains = await JmNetwork().getDomains();
+    controller?.close();
+    var title = domains != null ? "更新成功".tl : "更新失败".tl;
+    var msg = domains != null ? "" : "${"使用内置域名:".tl}\n";
+    domains = domains ?? builtInDomains;
+    for (String domain in domains) {
+        msg += "${"分流".tl}${domains.indexOf(domain) + 1}: $domain\n";
+    }
+    msg = msg.trim();
+    showConfirmDialog(App.globalContext!, title, msg, () {
+      appdata.appSettings.jmApiDomains = domains!;
+      JmNetwork().loginFromAppdata();
+    });
+  }
 }
 
 class _JmSettingsState extends State<JmSettings> {
@@ -45,6 +72,12 @@ class _JmSettingsState extends State<JmSettings> {
               appdata.updateSettings();
             },
           ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.update_outlined),
+          title: Text("更新分流域名列表".tl),
+          onTap: () => JmSettings.updateApiDomains(true),
+          trailing: const Icon(Icons.arrow_right),
         ),
         ListTile(
           leading: const Icon(Icons.track_changes),

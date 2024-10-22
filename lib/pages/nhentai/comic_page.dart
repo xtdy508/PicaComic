@@ -141,7 +141,12 @@ class NhentaiComicPage extends BaseComicPage<NhentaiComic> {
   @override
   void read(History? history) async {
     history = await History.createIfNull(history, data!);
-    App.globalTo(() => ComicReadingPage.nhentai(data!.id, data!.title));
+    App.globalTo(() => ComicReadingPage.nhentai(
+        data!.id,
+        data!.title,
+        initialPage: history!.page,
+      )
+    );
   }
 
   @override

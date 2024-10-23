@@ -58,7 +58,7 @@ class AccountsPage extends StatelessWidget {
       yield Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: Text(
-          element.name,
+          element.name.tl,
           style: const TextStyle(fontSize: 20),
         ),
       );

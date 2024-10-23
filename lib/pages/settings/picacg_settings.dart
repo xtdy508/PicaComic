@@ -40,6 +40,7 @@ class _PicacgSettingsState extends State<PicacgSettings> {
           trailing: Select(
             initialValue:
                 _imageQualityValues.indexOf(picacg.data['imageQuality']),
+            width: App.locale.languageCode == "en" ? 140 : 120,
             values: ["低".tl, "中".tl, "高".tl, "原图".tl],
             onChange: (i) {
               picacg.data['imageQuality'] = _imageQualityValues[i];

@@ -14,7 +14,7 @@ import 'package:pica_comic/pages/reader/comic_reading_page.dart';
 import '../comic_source.dart';
 
 final htManga = ComicSource.named(
-  name: '紳士漫畫',
+  name: '绅士漫画',
   key: 'htmanga',
   filePath: 'built-in',
   favoriteData: FavoriteData(

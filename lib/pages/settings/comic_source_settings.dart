@@ -411,7 +411,7 @@ class _BuiltInSourcesState extends State<_BuiltInSources> {
     var key = builtInSources[index];
     return ListTile(
       title: Text(
-          ComicSource.builtIn.firstWhere((e) => e.key == key).name),
+          ComicSource.builtIn.firstWhere((e) => e.key == key).name.tl),
       trailing: Switch(
         value: appdata.appSettings.isComicSourceEnabled(key),
         onChanged: (v) async {

@@ -41,7 +41,7 @@ class AllCategoryPage extends StatelessWidget {
                       //
                     }
                     return Tab(
-                      text: title,
+                      text: title.tl,
                       key: Key(e),
                     );
                   }).toList(),

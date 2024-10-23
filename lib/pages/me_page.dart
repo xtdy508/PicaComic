@@ -246,7 +246,7 @@ class MePage extends StatelessWidget {
     var result = <String>[];
     for (var source in ComicSource.sources) {
       if (source.isLogin) {
-        result.add(source.name);
+        result.add(source.name.tl);
       }
     }
     return result;

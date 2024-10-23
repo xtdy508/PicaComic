@@ -61,6 +61,7 @@ class _JmSettingsState extends State<JmSettings> {
           title: Text("收藏夹中漫画排序模式".tl),
           trailing: Select(
             initialValue: int.parse(appdata.settings[42]),
+            width: App.locale.languageCode == "en" ? 130 : 120,
             values: [
               "最新收藏".tl, "最新更新".tl
             ],

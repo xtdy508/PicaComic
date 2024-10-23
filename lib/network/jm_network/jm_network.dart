@@ -58,7 +58,10 @@ extension _CachedNetwork on CachedNetwork {
     } else if (data is List) {
       throw Exception("Data parsing error");
     }
-    var decodedData = JmNetwork.convertData(data, time);
+    var decodedData = JmNetwork.convertData(
+        data,
+        "$time${JmNetwork.kJmSecret}"
+    );
     if (expiredTime != CacheExpiredTime.no) {
       await CacheManager().writeCache(key, res.data!, expiredTime.time);
     }
@@ -93,15 +96,14 @@ class JmNetwork {
   bool _performingLogin = false;
 
   ///解密数据
-  static String convertData(String input, [int? time]) {
-    String secret = time == null ? String.fromCharCodes(domainSecret) : "$time$kJmSecret";
-    //key为时间+18comicAPPContent的md5结果
+  static String convertData(String input, String secret) {
+    //hash得到密钥
     var key = md5.convert(const Utf8Encoder().convert(secret));
-    BlockCipher cipher = ECBBlockCipher(AESEngine())
-      ..init(false, KeyParameter(const Utf8Encoder().convert(key.toString())));
     //先将数据进行base64解码
     final data = base64Decode(input);
     //再进行AES-ECB解密
+    BlockCipher cipher = ECBBlockCipher(AESEngine())
+      ..init(false, KeyParameter(const Utf8Encoder().convert(key.toString())));
     var offset = 0;
     var paddedPlainText = Uint8List(data.length);
     while (offset < data.length) {
@@ -127,7 +129,10 @@ class JmNetwork {
     var dio = Dio();
     try {
       var res = await dio.get(domainUrl);
-      var jsonData = json.decode(convertData(res.data)) as Map<String, dynamic>;
+      var jsonData = json.decode(convertData(
+          res.data,
+          String.fromCharCodes(domainSecret)
+      )) as Map<String, dynamic>;
       var urls = List<String>.from(jsonData['Server']);
       return urls;
     } on DioException catch (e) {
@@ -257,7 +262,7 @@ class JmNetwork {
       var resData = convertData(
           (const JsonDecoder()
               .convert(const Utf8Decoder().convert(res.data)))["data"],
-          time);
+          "$time$kJmSecret");
       return Res<dynamic>(const JsonDecoder().convert(resData));
     } on DioException catch (e) {
       if (kDebugMode) {

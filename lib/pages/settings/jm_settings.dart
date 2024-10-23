@@ -29,9 +29,6 @@ class JmSettings extends StatefulWidget {
   ];
 
   static void updateApiDomains([bool showLoading = false]) async {
-    if (ComicSource.sources.isEmpty) {
-      return;
-    }
     var controller = showLoading ? showLoadingDialog(App.globalContext!) : null;
     List<String>? domains = await JmNetwork().getDomains();
     controller?.close();

@@ -89,24 +89,30 @@ class _JmSettingsState extends State<JmSettings> {
                 autoSelectStream = b;
               });
               appdata.updateSettings();
-              JmNetwork().loginFromAppdata();
+              if (autoSelectStream) JmNetwork().loginFromAppdata();
             },
           ),
         ),
         ListTile(
           leading: const Icon(Icons.domain),
           title: Text("API域名".tl),
-          trailing: Select(
-            initialValue: int.parse(appdata.settings[17]),
-            values: [
-              "分流1".tl,"分流2".tl,"分流3".tl,"分流4".tl,
-            ],
-            onChange: (i){
-              appdata.settings[17] = i.toString();
-              appdata.updateSettings();
-              JmNetwork().loginFromAppdata();
-            },
-          )
+          trailing: IgnorePointer(
+            ignoring: autoSelectStream,
+            child: Opacity(
+              opacity: !autoSelectStream ? 1.0 : 0.5,
+              child: Select(
+                initialValue: int.parse(appdata.settings[17]),
+                values: [
+                  "分流1".tl,"分流2".tl,"分流3".tl,"分流4".tl,
+                ],
+                onChange: (i){
+                  appdata.settings[17] = i.toString();
+                  appdata.updateSettings();
+                  JmNetwork().loginFromAppdata();
+                },
+              ),
+            ),
+          ),
         ),
         ListTile(
           leading: const Icon(Icons.image),

@@ -277,7 +277,7 @@ class FavoritesPage extends StatelessWidget with _LocalFavoritesManager {
               width: 8,
             ),
             Text(
-              controller.current?.tl ?? "未选择".tl,
+              controller.current != null ? controller.current!.tl : "未选择".tl,
               style: const TextStyle(fontSize: 16),
             ).paddingBottom(3),
             const Spacer(),
@@ -351,7 +351,7 @@ class FavoritesPage extends StatelessWidget with _LocalFavoritesManager {
                 color: Theme.of(context).colorScheme.secondary,
               ),
               const SizedBox(width: 8),
-              Text(data?.title.tl ?? "Unknown"),
+              Text(data?.title != null ? data!.title.tl : "未知".tl,),
             ],
           ),
         );

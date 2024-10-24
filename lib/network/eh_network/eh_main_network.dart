@@ -135,7 +135,7 @@ class EhNetwork {
       }
       
       if(data.url.contains("bounce_login.php")){
-        throw Exception("需要登录或者登录过期".tl);
+        throw Exception("未登录或登录到期".tl);
       }
       
       await getCookies(true);

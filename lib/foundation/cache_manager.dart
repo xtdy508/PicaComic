@@ -140,7 +140,7 @@ class CacheManager {
       WHERE expires < ?
     ''', [DateTime.now().millisecondsSinceEpoch]);
     for(var row in res){
-      var dir = row[1] as int;
+      var dir = row[1] as String;
       var name = row[2] as String;
       var file = File('$cachePath/$dir/$name');
       if(await file.exists()){

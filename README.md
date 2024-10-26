@@ -1,13 +1,13 @@
 # Pica Comic
 
-[![flutter](https://img.shields.io/badge/flutter-3.24.3-blue)](https://flutter.dev/) 
+[![flutter](https://img.shields.io/badge/flutter-3.24.3-blue)](https://flutter.dev/)
 [![License](https://img.shields.io/github/license/Pacalini/PicaComic)](https://github.com/Pacalini/PicaComic/blob/master/LICENSE)
 [![Download](https://img.shields.io/github/v/release/Pacalini/PicaComic)](https://github.com/Pacalini/PicaComic/releases)
 [![stars](https://img.shields.io/github/stars/Pacalini/PicaComic)](https://github.com/Pacalini/PicaComic/stargazers)
 
 A comic app with multiple sources built with flutter.
 
-Forked from [wgh136](https://github.com/wgh136/PicaComic), minimal fix & supported provided, no guaranteed roadmap.
+**Forked from [nyne](https://github.com/wgh136), provide extended support & fix, no guaranteed roadmap.**
 
 ## Download
 
@@ -38,7 +38,7 @@ Currently, Pica Comic has 5 built-in comic sources:
 - e-hentai/exhentai
 - jmcomic
 - hitomi
-- 绅士漫画
+- htcomic
 - nhentai
 
 ### Custom Comic Source
@@ -56,11 +56,8 @@ You can add custom comic sources in the app after version 3.0.0.
 
 ### History
 
-This project initially started as an unofficial app for picacg 
+This project initially started as an unofficial app for picacg
 and later evolved into an app that supports multiple comic sources.
-
-## Build From Source Code
-See [https://docs.flutter.dev/](https://docs.flutter.dev/)
 
 ## Thanks
 

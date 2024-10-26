@@ -50,6 +50,11 @@ class EhNetwork {
       ? "https://api.e-hentai.org/api.php"
       : "https://exhentai.org/api.php";
 
+  ///24.10.25 update
+  get isNew => appdata.settings[20] == "0"
+      ? false
+      : true;
+
   final cookieJar = SingleInstanceCookieJar.instance!;
 
   ///给图片加载使用的cookie
@@ -591,10 +596,17 @@ class EhNetwork {
       if (subTitle != null && subTitle.removeAllBlank == "") {
         subTitle = null;
       }
+      final normalThumbnails = isNew
+          ? "div#gdt.gt100 > a > div"
+          : "div.gdtm > div";
+      final largeThumbnails = isNew
+          ? "div#gdt.gt200 > a > div"
+          : "div.gdtl > a > img";
+
       var thumbnailDiv =
-          document.querySelectorAll("div.gdtm > div").elementAtOrNull(0);
+      document.querySelectorAll(normalThumbnails).elementAtOrNull(0);
       if (thumbnailDiv != null) {
-        var pattern = RegExp(r"/m/(\d+)/");
+        var pattern = RegExp(r'url\((.+)/[^/]+\)$');
         var match = pattern.firstMatch(thumbnailDiv.attributes["style"] ?? "");
 
         if (match != null) {
@@ -604,10 +616,20 @@ class EhNetwork {
           }
         }
       } else {
-        var imgDom = document.querySelectorAll("div.gdtl > a > img");
-        for (var i in imgDom) {
-          if (i.attributes["src"] != null) {
-            thumbnailUrls.add(i.attributes["src"]!);
+        if (isNew) {
+          var pattern = RegExp(r'url\((.*?)\)');
+          thumbnailUrls.addAll(
+              document.querySelectorAll(largeThumbnails).map((e){
+                var match = pattern.firstMatch(e.attributes["style"] ?? "");
+                return match!.group(1)!;
+              })
+          );
+        } else {
+          var imgDom = document.querySelectorAll(largeThumbnails);
+          for (var i in imgDom) {
+            if (i.attributes["src"] != null) {
+              thumbnailUrls.add(i.attributes["src"]!);
+            }
           }
         }
         var totalPages = document.querySelectorAll("table.ptt > tbody > tr > td > a")
@@ -707,6 +729,10 @@ class EhNetwork {
       for (var link in links) {
         urls_.add(link.attributes["href"]!);
       }
+      links = temp.querySelectorAll("div#gdt > a");
+      for (var link in links) {
+        urls_.add(link.attributes["href"]!);
+      }
       return Res(urls_);
     } catch (e, s) {
       LogManager.addLog(LogLevel.error, "Data Analysis", "$e\n$s");
@@ -738,7 +764,9 @@ class EhNetwork {
         return Res.fromErrorRes(res);
       }
       var document = parse(res.data);
-      var thumbnailDiv = document.querySelectorAll("div.gdtm > div")[0];
+      var thumbnailDiv = isNew
+          ? document.querySelectorAll("div#gdt.gt100 > a > div")[0]
+          : document.querySelectorAll("div.gdtm > div")[0];
       var pattern = RegExp(r'url\((.*?)\)');
       var match = pattern.firstMatch(thumbnailDiv.attributes["style"] ?? "");
 
@@ -765,12 +793,22 @@ class EhNetwork {
   }
 
   Future<Res<List<String>>> getLargeThumbnails(Gallery gallery, int page) async{
-    var res = await request("${gallery.link}?p=$page");
+    var res = await request("${gallery.link}?p=${page - 1}");
     if(res.error){
       return Res.fromErrorRes(res);
     }
     var document = parse(res.data);
-    return Res(document.querySelectorAll("div.gdtl > a > img").map((e) => e.attributes["src"] ?? "").toList());
+    if (isNew){
+      var pattern = RegExp(r'url\((.*?)\)');
+      return Res(
+          document.querySelectorAll("div#gdt > a > div").map((e){
+            var match = pattern.firstMatch(e.attributes["style"] ?? "");
+            return match!.group(1)!;
+          }).toList()
+      );
+    } else{
+      return Res(document.querySelectorAll("div.gdtl > a > img").map((e) => e.attributes["src"] ?? "").toList());
+    }
   }
 
   List<String> _splitKeyword(String keyword) {

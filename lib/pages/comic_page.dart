@@ -562,11 +562,13 @@ class ThumbnailsData {
   int current = 1;
   final int maxPage;
   final Future<Res<List<String>>> Function(int page) load;
+  bool isGetting = false;
 
   Future<void> get(void Function() update) async {
-    if (current >= maxPage) {
+    if (current >= maxPage || isGetting == true) {
       return;
     }
+    isGetting = true;
     var res = await load(current + 1);
     if (res.success) {
       thumbnails.addAll(res.data);
@@ -575,6 +577,7 @@ class ThumbnailsData {
     } else {
       Log.error("Network", "Failed to load thumbnails: ${res.errorMessage}");
     }
+    isGetting = false;
   }
 
   ThumbnailsData(this.thumbnails, this.load, this.maxPage);

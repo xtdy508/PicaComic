@@ -58,6 +58,14 @@ class ImageFavoriteManager{
     Webdav.uploadData();
   }
 
+  static bool exist(String id, int ep, int page) {
+    var res = _db.select("""
+      select * from image_favorites
+      where id = ? and ep = ? and page = ?;
+    """, [id, ep, page]);
+    return res.isEmpty ? false : true;
+  }
+
   static int get length {
     var res = _db.select("select count(*) from image_favorites;");
     return res.first.values.first! as int;

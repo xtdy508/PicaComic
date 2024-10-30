@@ -216,6 +216,24 @@ class HistoryManager {
       }
       LogManager.addLog(LogLevel.info, "HistoryManager",
           "merge history, skipped $skips, added ${newHistory.length - skips}");
+
+      //import favorite images
+      skips = 0;
+      ImageFavoriteManager.init();
+      var newImages0 = db.select("select * from image_favorites;");
+      var newImages = newImages0.map((e) =>
+          ImageFavorite(e["id"], e["cover"], e["title"], e["ep"], e["page"], jsonDecode(e["other"]))).toList();
+      for (var image in newImages) {
+        if (ImageFavoriteManager.exist(image.id, image.ep, image.page)) {
+          skips++;
+        } else {
+          ImageFavoriteManager.add(image);
+          LogManager.addLog(LogLevel.info, "HistoryManager",
+              "merge favorite image ep ${image.ep} page ${image.page} @ ${image.id}");
+        }
+      }
+      LogManager.addLog(LogLevel.info, "HistoryManager",
+          "merge favorite images, skipped $skips, added ${newImages.length - skips}");
     }
     db.dispose();
     file.deleteSync();

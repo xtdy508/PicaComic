@@ -50,11 +50,6 @@ class EhNetwork {
       ? "https://api.e-hentai.org/api.php"
       : "https://exhentai.org/api.php";
 
-  ///24.10.25 update
-  get isNew => appdata.settings[20] == "0"
-      ? false
-      : true;
-
   final cookieJar = SingleInstanceCookieJar.instance!;
 
   ///给图片加载使用的cookie
@@ -596,46 +591,38 @@ class EhNetwork {
       if (subTitle != null && subTitle.removeAllBlank == "") {
         subTitle = null;
       }
-      final normalThumbnails = isNew
-          ? "div#gdt.gt100 > a > div"
-          : "div.gdtm > div";
-      final largeThumbnails = isNew
-          ? "div#gdt.gt200 > a > div"
-          : "div.gdtl > a > img";
 
-      var thumbnailDiv =
-      document.querySelectorAll(normalThumbnails).elementAtOrNull(0);
-      if (thumbnailDiv != null) {
-        var pattern = RegExp(r'url\((.+)/[^/]+\)$');
-        var match = pattern.firstMatch(thumbnailDiv.attributes["style"] ?? "");
+      //Small Thumbnails on Page 0 (if exist)
+      var smallThumbnails = document.querySelectorAll("div#gdt.gt100 > a > div").elementAtOrNull(0);
+      if (smallThumbnails != null) {
+        var pattern = RegExp(r'url\((.*\/)[^\/]*\)');
+        var e = smallThumbnails;
+        e = e.children.isEmpty ? e : e.children[0];
+        LogManager.addLog(LogLevel.warning, "cnm", "${e.attributes["style"]}");
+        var match = pattern.firstMatch(e.attributes["style"] ?? "");
+        auth["thumbnailKey"] = match!.group(1)!.replaceRange(
+          match.group(1)!.lastIndexOf('/'),
+          null,
+          '',
+        );
+      }
 
-        if (match != null) {
-          var extractedValue = match.group(1);
-          if (extractedValue != null) {
-            auth["thumbnailKey"] = extractedValue;
-          }
-        }
-      } else {
-        if (isNew) {
-          var pattern = RegExp(r'url\((.*?)\)');
-          thumbnailUrls.addAll(
-              document.querySelectorAll(largeThumbnails).map((e){
-                var match = pattern.firstMatch(e.attributes["style"] ?? "");
-                return match!.group(1)!;
-              })
-          );
-        } else {
-          var imgDom = document.querySelectorAll(largeThumbnails);
-          for (var i in imgDom) {
-            if (i.attributes["src"] != null) {
-              thumbnailUrls.add(i.attributes["src"]!);
-            }
-          }
-        }
+      //Normal Thumbnails on Page 0 (if exist)
+      var normalThumbnails = document.querySelectorAll("div#gdt.gt200 > a > div");
+      if (normalThumbnails.isNotEmpty) {
+        var pattern = RegExp(r'url\((.*?)\)');
         var totalPages = document.querySelectorAll("table.ptt > tbody > tr > td > a")
             .where((element) => element.text.isNum).last.text;
         auth["thumbnailKey"] = "large thumbnail: $totalPages";
+        thumbnailUrls.addAll(
+            normalThumbnails.map((e){
+              e = e.children.isEmpty ? e : e.children[0];
+              var match = pattern.firstMatch(e.attributes["style"] ?? "");
+              return match!.group(1)!;
+          })
+        );
       }
+
       var archiveDownload = document.querySelectorAll('a')
           .firstWhereOrNull((element) => element.text == "Archive Download")
           ?.attributes["onclick"];
@@ -721,15 +708,7 @@ class EhNetwork {
     try {
       var urls_ = <String>[];
       var temp = parse(res.data);
-      var links = temp.querySelectorAll("div#gdt > div.gdtm > div > a");
-      for (var link in links) {
-        urls_.add(link.attributes["href"]!);
-      }
-      links = temp.querySelectorAll("div#gdt > div.gdtl > a");
-      for (var link in links) {
-        urls_.add(link.attributes["href"]!);
-      }
-      links = temp.querySelectorAll("div#gdt > a");
+      var links = temp.querySelectorAll("div#gdt > a");
       for (var link in links) {
         urls_.add(link.attributes["href"]!);
       }
@@ -764,24 +743,15 @@ class EhNetwork {
         return Res.fromErrorRes(res);
       }
       var document = parse(res.data);
-      var thumbnailDiv = isNew
-          ? document.querySelectorAll("div#gdt.gt100 > a > div")[0]
-          : document.querySelectorAll("div.gdtm > div")[0];
+      var e = document.querySelectorAll("div#gdt.gt100 > a > div")[0];
+      e = e.children.isEmpty ? e : e.children[0];
       var pattern = RegExp(r'url\((.*?)\)');
-      var match = pattern.firstMatch(thumbnailDiv.attributes["style"] ?? "");
-
-      if (match != null) {
-        var extractedValue = match.group(1);
-        if (extractedValue != null) {
-          gallery.auth!["thumbnailKey"] = extractedValue.replaceRange(
-            extractedValue.lastIndexOf('/'),
-            null,
-            '',
-          );
-        }
-      } else {
-        return const Res(null, errorMessage: "Failed to get Thumbnail");
-      }
+      var match = pattern.firstMatch(e.attributes["style"] ?? "");
+      gallery.auth!["thumbnailKey"] = match!.group(1)!.replaceRange(
+        match.group(1)!.lastIndexOf('/'),
+        null,
+        '',
+      );
     }
     return Res(List.generate(int.parse(gallery.maxPage), (index) {
       var page = (index ~/ 20).toString();
@@ -798,17 +768,15 @@ class EhNetwork {
       return Res.fromErrorRes(res);
     }
     var document = parse(res.data);
-    if (isNew){
-      var pattern = RegExp(r'url\((.*?)\)');
-      return Res(
-          document.querySelectorAll("div#gdt > a > div").map((e){
-            var match = pattern.firstMatch(e.attributes["style"] ?? "");
-            return match!.group(1)!;
-          }).toList()
-      );
-    } else{
-      return Res(document.querySelectorAll("div.gdtl > a > img").map((e) => e.attributes["src"] ?? "").toList());
-    }
+    var pattern = RegExp(r'url\((.*?)\)');
+    return Res(
+        document.querySelectorAll("div#gdt > a > div").map((e){
+          e = e.children.isEmpty ? e : e.children[0];
+          var match = pattern.firstMatch(e.attributes["style"] ?? "");
+          return match!.group(1)!;
+        }).toList()
+    );
+
   }
 
   List<String> _splitKeyword(String keyword) {

@@ -395,7 +395,7 @@ class EhNetwork {
           final coverPath = item.querySelector("td.gl1e > div > a > img")?.attributes["src"] ?? "";
           final stars = getStarsFromPosition(item.querySelector("td.gl2e > div > div.gl3e > div.ir")?.attributes["style"] ?? "");
           final link = item.querySelector("td.gl1e > div > a")?.attributes["href"] ?? "";
-          final tags = [...item.querySelectorAll("div.gt"), ...item.querySelectorAll("div.gtl")].map((e) => e.attributes["title"] ?? "").toList();
+          final tags = item.querySelectorAll('div.gt, div.gtl').map((e) => e.attributes["title"] ?? "").toList();
           final pages = int.tryParse(item.querySelectorAll("td.gl2e > div > div.gl3e > div")
               .firstWhereOrNull((element) => element.text.contains("pages"))?.text.nums ?? "");
           galleries.add(EhGalleryBrief(title, type, time, uploader, coverPath, stars, link, tags, pages: pages));
@@ -413,10 +413,13 @@ class EhNetwork {
           final time = item.querySelectorAll("td.gl2m > div")
               .firstWhereOrNull((element) => DateTime.tryParse(element.text) != null)?.text ?? "Unknown";
           final uploader = item.querySelector("td.gl5m > div > a")?.text ?? "Unknown";
-          final coverPath = item.querySelector("td.gl2m > div > div > img")?.attributes["src"] ?? "";
+          var coverPath = item.querySelector("td.gl2m > div > div > img")?.attributes["src"];
+          if (coverPath![0] == 'd') {
+            coverPath = item.children[1 + t].children[1].children[0].children[0].attributes["data-src"];
+          }
           final stars = getStarsFromPosition(item.querySelector("td.gl4m > div.ir")?.attributes["style"] ?? "");
           final link = item.querySelector("td.gl3m > a")?.attributes["href"] ?? "";
-          galleries.add(EhGalleryBrief(title, type, time, uploader, coverPath, stars, link, []));
+          galleries.add(EhGalleryBrief(title, type, time, uploader, coverPath!, stars, link, []));
         }
         catch(e){
           //忽视

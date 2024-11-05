@@ -71,7 +71,10 @@ class Gallery with HistoryMixin{
   String link;
   @override
   String maxPage;
+  int pageSize;
   List<String> thumbnails;
+  String ext;
+  int width;
 
   List<String> _generateTags(){
     var res = <String>[];
@@ -125,7 +128,10 @@ class Gallery with HistoryMixin{
     favorite = json["favorite"],
     link = json["link"],
     maxPage = json["maxPage"],
+    pageSize = json["pageSize"],
     thumbnails = [],
+    ext = json["ext"],
+    width = 0,
     auth = json["auth"] == null ? null : Map<String,String>.from(json["auth"]),
     comments = []{
     for(var key in (json["tags"] as Map<String, dynamic>).keys){
@@ -147,7 +153,10 @@ class Gallery with HistoryMixin{
       this.favorite,
       this.link,
       this.maxPage,
+      this.pageSize,
       this.thumbnails, // unused field
+      this.ext,
+      this.width,
       this.subTitle);
 
   @override

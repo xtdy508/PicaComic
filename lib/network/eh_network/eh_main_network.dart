@@ -562,7 +562,7 @@ class EhNetwork {
           .querySelector("div#gleft > div#gd1 > div")!
           .attributes["style"]!;
       coverPath =
-          RegExp(r"https?://([-a-zA-Z0-9.]+(/\S*)?\.(?:jpg|jpeg|gif|png))")
+          RegExp(r"https?://([-a-zA-Z0-9.]+(/\S*)?\.(?:jpg|jpeg|gif|png|webp))")
               .firstMatch(coverPath)![0]!;
       //评论
       var comments = <Comment>[];
@@ -595,35 +595,49 @@ class EhNetwork {
         subTitle = null;
       }
 
+      var pageSize = 20;
+      var width = 200;
+      var ext = "webp";
+
       //Small Thumbnails on Page 0 (if exist)
-      var smallThumbnails = document.querySelectorAll("div#gdt.gt100 > a > div").elementAtOrNull(0);
-      if (smallThumbnails != null) {
-        var pattern = RegExp(r'url\((.*\/)[^\/]*\)');
-        var e = smallThumbnails;
-        e = e.children.isEmpty ? e : e.children[0];
-        LogManager.addLog(LogLevel.warning, "cnm", "${e.attributes["style"]}");
-        var match = pattern.firstMatch(e.attributes["style"] ?? "");
-        auth["thumbnailKey"] = match!.group(1)!.replaceRange(
-          match.group(1)!.lastIndexOf('/'),
-          null,
-          '',
-        );
+      var smallThumbnails = document.querySelectorAll("div#gdt.gt100 > a > div");
+      if (smallThumbnails.isNotEmpty) {
+        pageSize = 40;
+        var div = smallThumbnails[0].children.isEmpty
+            ? smallThumbnails[0]
+            : smallThumbnails[0].children[0];
+        var style = div.attributes["style"];
+        width = int.parse(style!.split('width:')[1].split('px')[0]);
+        var url = style.split("background:transparent url(")[1].split(")")[0];
+        ext = url.substring(url.lastIndexOf('.') + 1);
+        auth["thumbnailKey"] = url.substring(0, url.lastIndexOf('/'));
       }
 
       //Normal Thumbnails on Page 0 (if exist)
       var normalThumbnails = document.querySelectorAll("div#gdt.gt200 > a > div");
       if (normalThumbnails.isNotEmpty) {
-        var pattern = RegExp(r'url\((.*?)\)');
-        var totalPages = document.querySelectorAll("table.ptt > tbody > tr > td > a")
-            .where((element) => element.text.isNum).last.text;
-        auth["thumbnailKey"] = "large thumbnail: $totalPages";
-        thumbnailUrls.addAll(
-            normalThumbnails.map((e){
-              e = e.children.isEmpty ? e : e.children[0];
-              var match = pattern.firstMatch(e.attributes["style"] ?? "");
-              return match!.group(1)!;
-          })
-        );
+        pageSize = 20;
+        var div = normalThumbnails[0].children.isEmpty
+            ? normalThumbnails[0]
+            : normalThumbnails[0].children[0];
+        var style = div.attributes["style"];
+        width = int.parse(style!.split('width:')[1].split('px')[0]);
+        var r = style.split("background:transparent url(")[1];
+        if (r.contains("px")) {
+          var url = r.split(")")[0];
+          ext = url.substring(url.lastIndexOf('.') + 1);
+          auth["thumbnailKey"] = url.substring(0, url.lastIndexOf('/'));
+        } else {
+          var totalPages = document.querySelectorAll("table.ptt > tbody > tr > td > a")
+              .where((element) => element.text.isNum).last.text;
+          auth["thumbnailKey"] = "large thumbnail: $totalPages";
+          thumbnailUrls.addAll(
+              normalThumbnails.map((div){
+                div = div.children.isEmpty ? div : div.children[0];
+                return div.attributes["style"]!.split("background:transparent url(")[1].split(")")[0];
+              })
+          );
+        }
       }
 
       var archiveDownload = document.querySelectorAll('a')
@@ -649,7 +663,10 @@ class EhNetwork {
           favorite,
           link,
           maxPage,
+          pageSize,
           thumbnailUrls,
+          ext,
+          width,
           subTitle));
     } catch (e, s) {
       LogManager.addLog(LogLevel.error, "Data Analysis", "$e\n$s");
@@ -746,22 +763,18 @@ class EhNetwork {
         return Res.fromErrorRes(res);
       }
       var document = parse(res.data);
-      var e = document.querySelectorAll("div#gdt.gt100 > a > div")[0];
-      e = e.children.isEmpty ? e : e.children[0];
-      var pattern = RegExp(r'url\((.*?)\)');
-      var match = pattern.firstMatch(e.attributes["style"] ?? "");
-      gallery.auth!["thumbnailKey"] = match!.group(1)!.replaceRange(
-        match.group(1)!.lastIndexOf('/'),
-        null,
-        '',
-      );
+      var div = document.querySelectorAll("div#gdt > a > div")[0];
+      div = div.children.isEmpty ? div : div.children[0];
+      var style = div.attributes["style"];
+      var url = style!.split("background:transparent url(")[1].split(")")[0];
+      gallery.auth!["thumbnailKey"] = url;
     }
     return Res(List.generate(int.parse(gallery.maxPage), (index) {
-      var page = (index ~/ 20).toString();
+      var page = (index ~/ gallery.pageSize).toString();
       if (page.length == 1) {
         page = "0$page";
       }
-      return "${gallery.auth!["thumbnailKey"]!}/${getGalleryId(gallery.link)}-$page.jpg";
+      return "${gallery.auth!["thumbnailKey"]!}/${getGalleryId(gallery.link)}-$page.${gallery.ext}";
     }));
   }
 
@@ -771,12 +784,12 @@ class EhNetwork {
       return Res.fromErrorRes(res);
     }
     var document = parse(res.data);
-    var pattern = RegExp(r'url\((.*?)\)');
     return Res(
-        document.querySelectorAll("div#gdt > a > div").map((e){
-          e = e.children.isEmpty ? e : e.children[0];
-          var match = pattern.firstMatch(e.attributes["style"] ?? "");
-          return match!.group(1)!;
+        document.querySelectorAll("div#gdt > a > div").map((div){
+          div = div.children.isEmpty ? div : div.children[0];
+          var style = div.attributes["style"];
+          var url = style!.split("background:transparent url(")[1].split(")")[0];
+          return url;
         }).toList()
     );
 

@@ -195,7 +195,7 @@ class EhGalleryPage extends BaseComicPage<Gallery> {
     return ColoredBox(
       color: context.colorScheme.surfaceContainerHighest,
       child:
-          EhThumbnailLoader(image: CachedImageProvider(imageUrl), index: index),
+          EhThumbnailLoader(image: CachedImageProvider(imageUrl), pageSize:data!.pageSize, width: data!.width, index: index),
     );
   }
 
@@ -526,9 +526,13 @@ class CommentLogic extends StateController {
 
 class EhThumbnailLoader extends StatefulWidget {
   const EhThumbnailLoader(
-      {required this.image, required this.index, super.key});
+      {required this.image, required this.width, required this.pageSize, required this.index, super.key});
 
   final ImageProvider image;
+
+  final int pageSize;
+
+  final int width;
 
   final int index;
 
@@ -559,7 +563,7 @@ class _EhThumbnailLoaderState extends State<EhThumbnailLoader> {
       return const SizedBox();
     } else {
       return CustomPaint(
-        painter: _EhThumbnailPainter(widget.index, image!),
+        painter: _EhThumbnailPainter(widget.index, widget.pageSize, widget.width, image!),
         child: const SizedBox(
           width: double.infinity,
           height: double.infinity,
@@ -589,14 +593,16 @@ class _EhThumbnailLoaderState extends State<EhThumbnailLoader> {
 
 class _EhThumbnailPainter extends CustomPainter {
   final int index;
+  final int pageSize;
+  final int width;
   final ui.Image image;
 
-  _EhThumbnailPainter(this.index, this.image);
+  _EhThumbnailPainter(this.index, this.pageSize, this.width, this.image);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final start = index % 20 * 100;
-    final end = start + 100;
+    final start = index % pageSize * width;
+    final end = start + width;
     final rect = Rect.fromLTRB(0, 0, size.width, size.height);
     final srcRect = Rect.fromLTRB(
         start.toDouble(), 0, end.toDouble(), image.height.toDouble());

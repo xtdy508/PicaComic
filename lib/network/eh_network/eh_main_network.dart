@@ -602,7 +602,6 @@ class EhNetwork {
       //Small Thumbnails on Page 0 (if exist)
       var smallThumbnails = document.querySelectorAll("div#gdt.gt100 > a > div");
       if (smallThumbnails.isNotEmpty) {
-        pageSize = 40;
         var div = smallThumbnails[0].children.isEmpty
             ? smallThumbnails[0]
             : smallThumbnails[0].children[0];
@@ -610,6 +609,7 @@ class EhNetwork {
         width = int.parse(style!.split('width:')[1].split('px')[0]);
         var url = style.split("background:transparent url(")[1].split(")")[0];
         ext = url.substring(url.lastIndexOf('.') + 1);
+        pageSize = ext == "webp" ? 40 : 20;
         auth["thumbnailKey"] = url.substring(0, url.lastIndexOf('/'));
       }
 
@@ -628,6 +628,7 @@ class EhNetwork {
           ext = url.substring(url.lastIndexOf('.') + 1);
           auth["thumbnailKey"] = url.substring(0, url.lastIndexOf('/'));
         } else {
+          // legacy stand-alone large thumbnail
           var totalPages = document.querySelectorAll("table.ptt > tbody > tr > td > a")
               .where((element) => element.text.isNum).last.text;
           auth["thumbnailKey"] = "large thumbnail: $totalPages";

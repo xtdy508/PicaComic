@@ -131,7 +131,7 @@ class Gallery with HistoryMixin{
     pageSize = json["pageSize"],
     thumbnails = [],
     ext = json["ext"],
-    width = 0,
+    width = json["width"],
     auth = json["auth"] == null ? null : Map<String,String>.from(json["auth"]),
     comments = []{
     for(var key in (json["tags"] as Map<String, dynamic>).keys){

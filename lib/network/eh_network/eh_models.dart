@@ -128,10 +128,10 @@ class Gallery with HistoryMixin{
     favorite = json["favorite"],
     link = json["link"],
     maxPage = json["maxPage"],
-    pageSize = json["pageSize"],
+    pageSize = json["pageSize"] ?? 20,
     thumbnails = [],
-    ext = json["ext"],
-    width = json["width"],
+    ext = json["ext"] ?? "jpg",
+    width = json["width"] ?? 100,
     auth = json["auth"] == null ? null : Map<String,String>.from(json["auth"]),
     comments = []{
     for(var key in (json["tags"] as Map<String, dynamic>).keys){

@@ -549,7 +549,7 @@ class PreSearchPage extends StatelessWidget {
             Wrap(
               children: [
                 for (var source in comicSources)
-                  buildItem(logic, source.key, source.name)
+                  buildItem(logic, source.key, source.name.tl)
               ],
             ).paddingHorizontal(12),
             const SizedBox(height: 8)

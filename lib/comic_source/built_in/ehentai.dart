@@ -238,7 +238,11 @@ class _EhGalleryTile extends ComicTile {
           continue;
         }
         if (App.locale.languageCode != "zh") {
-          res.add(splits[1]);
+          res.add(
+              splits[1].length > 32
+                  ? "${splits[1].substring(0,20)}..."
+                  : splits[1]
+          );
           continue;
         }
         var lowLevelKey = ["character", "artist", "cosplayer", "group"];
@@ -302,8 +306,12 @@ class _EhGalleryTile extends ComicTile {
             gallery.tags[1].substring(0, 4) == "lang") {
           lang = gallery.tags[1].substring(9);
         }
-        if (App.locale.languageCode == "zh" && lang != null) {
-          lang = lang.translateTagsToCN;
+        if (lang != null) {
+          if (App.locale.languageCode == "zh") {
+            lang = lang.translateTagsToCN;
+          } else {
+            lang = lang[0].toUpperCase() + lang.substring(1);
+          }
         }
         return lang;
       }.call();

@@ -540,7 +540,11 @@ class EhNetwork {
       for (var tr in tagLists) {
         var list = <String>[];
         for (var div in tr.children[1].children) {
-          list.add(div.children[0].text);
+          list.add(div.children[0]
+                  .attributes["onclick"]!
+                  .split(":")[1]
+                  .split("'")[0]
+          );
         }
         tags[tr.children[0].text.substring(0, tr.children[0].text.length - 1)] =
             list;

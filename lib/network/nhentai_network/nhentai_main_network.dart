@@ -350,6 +350,7 @@ class NhentaiNetwork {
             "j" => "jpg",
             "p" => "png",
             "g" => "gif",
+            "w" => "webp",
             _ => "jpg"
           };
           images.add(

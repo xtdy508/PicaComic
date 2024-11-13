@@ -1071,7 +1071,11 @@ class DownloadedComicTile extends ComicTile {
   final void Function(TapDownDetails details) onSecondaryTap;
 
   @override
-  List<String>? get tags => tag.map((e) => e.translateTagsToCN).toList();
+  List<String>? get tags => tag.map((e) =>
+    App.locale.languageCode == "zh"
+        ? e.translateTagsToCN
+        : e
+  ).toList();
 
   @override
   String get description => "${size}MB";

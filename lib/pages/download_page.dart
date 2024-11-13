@@ -347,7 +347,7 @@ class DownloadPage extends StatelessWidget {
     var file = File("${App.dataPath}/font.ttf");
     if (!App.isWindows && !await file.exists()) {
       showConfirmDialog(App.globalContext!, "缺少字体".tl,
-          "需要下载字体文件(10.1MB), 是否继续?", downloadFont);
+          "需要下载字体文件(10.1MB), 是否继续?".tl, downloadFont);
     } else {
       bool canceled = false;
       var controller = showLoadingDialog(
@@ -366,7 +366,6 @@ class DownloadPage extends StatelessWidget {
       if (!canceled) {
         controller.close();
         await exportPdf("${App.cachePath}/$fileName");
-        File("${App.cachePath}/$fileName").deleteSync();
       }
     }
   }

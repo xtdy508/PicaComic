@@ -549,6 +549,8 @@
     "Eh订阅": "Eh訂閱",
     "菜单": "選單",
     "导出为pdf": "匯出為pdf",
+    "缺少字体": "缺少字體",
+    "需要下载字体文件(10.1MB), 是否继续?": "需要下載字型文件(10.1MB), 是否繼續?",
     "更新漫画信息": "更新漫畫資訊"
   },
   "en_US": {
@@ -1107,6 +1109,8 @@
     "Eh订阅": "Eh subscription",
     "菜单": "Menu",
     "导出为pdf": "Export as pdf",
+    "缺少字体": "Missing fonts",
+    "需要下载字体文件(10.1MB), 是否继续?": "Download missing fonts file (10.1MB), continue?",
     "更新漫画信息": "Update comic information"
   }
 }

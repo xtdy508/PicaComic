@@ -1848,7 +1848,7 @@ class _FavoriteComicWidgetState extends State<FavoriteComicWidget> {
             if (context.mounted) {
               context.pop();
             }
-            showToast(message: "成功添加收藏".tl);
+            showToast(message: "添加收藏成功".tl);
           } else {
             setState(() {
               isAdding = false;
@@ -1916,7 +1916,8 @@ class _FavoriteComicWidgetState extends State<FavoriteComicWidget> {
               widget.localFavoriteItem,
             );
           }
-          if (context.mounted) {
+          showToast(message: "取消收藏成功".tl);
+          if (App.isMobile && context.mounted) {
             context.pop();
           }
         },

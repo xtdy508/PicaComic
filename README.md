@@ -20,6 +20,11 @@ alt="Get it on GitHub" align="center" height="80" /></a>
 alt="Get it on Obtainium" align="center" height="54" />
 </a>
 
+An [AUR package](https://aur.archlinux.org/packages/pica-comic-bin) is packed by [Lilinzta](https://github.com/Lilinzta):
+```shell
+paru -S pica-comic-bin
+```
+
 ## Build
 
 1. Clone the repository

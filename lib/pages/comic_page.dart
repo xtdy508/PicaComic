@@ -1917,9 +1917,6 @@ class _FavoriteComicWidgetState extends State<FavoriteComicWidget> {
             );
           }
           showToast(message: "取消收藏成功".tl);
-          if (App.isMobile && context.mounted) {
-            context.pop();
-          }
         },
         child: Text("取消收藏".tl),
       );

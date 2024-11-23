@@ -1251,7 +1251,7 @@ abstract class BaseComicPage<T extends Object> extends StatelessWidget {
                     isLiked ? Icons.favorite : Icons.favorite_border, onLike!),
               if (openComments != null)
                 buildItem(
-                    commentsCount ?? "评论".tl, Icons.comment, openComments!),
+                    commentsCount ?? "评论".tl, Icons.comment_outlined, openComments!),
               if (searchSimilar != null)
                 buildItem("相似".tl, Icons.search, searchSimilar!),
               if (downloadManager.isExists(downloadedId))
@@ -1423,9 +1423,7 @@ abstract class BaseComicPage<T extends Object> extends StatelessWidget {
           Tooltip(
             message: "排序".tl,
             child: IconButton(
-              icon: Icon(_logic.reverseEpsOrder
-                  ? Icons.vertical_align_top
-                  : Icons.vertical_align_bottom_outlined),
+              icon: const Icon(Icons.swap_vert),
               onPressed: () {
                 _logic.reverseEpsOrder = !_logic.reverseEpsOrder;
                 _logic.update();

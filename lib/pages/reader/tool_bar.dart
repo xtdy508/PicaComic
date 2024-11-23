@@ -79,7 +79,7 @@ extension ToolBar on ComicReadingPage {
                         child: IconButton(
                           icon: () {
                             if (logic.rotation == null) {
-                              return const Icon(Icons.screen_rotation);
+                              return const Icon(Icons.screen_rotation_alt);
                             } else if (logic.rotation == false) {
                               return const Icon(Icons.screen_lock_portrait);
                             } else {
@@ -113,7 +113,7 @@ extension ToolBar on ComicReadingPage {
                     Tooltip(
                       message: "收藏图片".tl,
                       child: IconButton(
-                        icon: const Icon(Icons.favorite),
+                        icon: const Icon(Icons.favorite_outline),
                         onPressed: () async {
                           try {
                             final id =
@@ -149,14 +149,20 @@ extension ToolBar on ComicReadingPage {
                                 otherInfo["eps"] = readingData.eps;
                               }
                               otherInfo["url"] = logic.urls[logic.index - 1];
-                              ImageFavoriteManager.add(ImageFavorite(
+                              var favorite = ImageFavorite(
                                   id,
                                   image,
                                   readingData.title,
                                   logic.order,
                                   logic.index,
-                                  otherInfo));
-                              showToast(message: "成功收藏图片".tl);
+                                  otherInfo);
+                              if (!ImageFavoriteManager.exist(id, logic.order, logic.index)) {
+                                ImageFavoriteManager.add(favorite);
+                                showToast(message: "已添加至图片收藏".tl);
+                              } else {
+                                ImageFavoriteManager.delete(favorite);
+                                showToast(message: "已取消图片收藏".tl);
+                              }
                             }
                           } catch (e) {
                             showToast(message: e.toString());
@@ -182,14 +188,14 @@ extension ToolBar on ComicReadingPage {
                       Tooltip(
                         message: "章节".tl,
                         child: IconButton(
-                          icon: const Icon(Icons.library_books),
+                          icon: const Icon(Icons.format_list_numbered),
                           onPressed: openEpsDrawer,
                         ),
                       ),
                     Tooltip(
                       message: "保存图片".tl,
                       child: IconButton(
-                        icon: const Icon(Icons.download),
+                        icon: const Icon(Icons.save_alt),
                         onPressed: saveCurrentImage,
                       ),
                     ),

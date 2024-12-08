@@ -77,7 +77,7 @@ class Appdata {
     "", //45 webdav
     "0", //46 webdav version
     "0", //47 eh warning
-    "https://nhentai.net", //48 nhentai domain
+    "https://nhentai.net", //48 nhentai domain (deprecated)
     "1", //49 阅读器中双击放缩
     "", //50 language, empty=system
     "", //51 默认收藏夹

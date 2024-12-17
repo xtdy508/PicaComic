@@ -7,7 +7,6 @@ import 'jm_network.dart';
 var _device = '';
 
 String get device {
-  // 生成随机的设备标识符
   if(_device.isEmpty) {
     var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     var random = math.Random();
@@ -18,7 +17,8 @@ String get device {
   return _device;
 }
 
-String _build = "AP3A.241105.008";
+/* Android 15 QPR1 */
+String _build = "AP4A.241205.013";
 
 String get jmApiUA {
   return "Mozilla/5.0 (Linux; Android 15; $device Build/$_build; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/131.0.0.0 Mobile Safari/537.36";
@@ -27,6 +27,17 @@ String get jmApiUA {
 String get jmImgUA {
   return "Dalvik/2.1.0 (Linux; V; Android 15; $device Build/$_build)";
 }
+
+/* Reserved for Android 16: */
+/* https://goo.gle/4fZkFiE  */
+
+// String get jmApiUA {
+//   return "Mozilla/5.0 (Linux; Android 10; K; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/131.0.0.0 Mobile Safari/537.36";
+// }
+//
+// String get jmImgUA {
+//   return "Dalvik/2.1.0 (Linux; Android 10; K)";
+// }
 
 const _jmVersion = "1.7.5";
 

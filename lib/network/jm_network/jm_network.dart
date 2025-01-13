@@ -666,7 +666,8 @@ class JmNetwork {
       if (res.error) {
         return Res(null, errorMessage: res.errorMessage);
       }
-      jm.data['name'] = account;
+      jm.data['name'] = res.data['username'];
+      jm.data['id'] = res.data['uid'];
       appdata.writeData();
       return const Res(true);
     } finally {
@@ -943,6 +944,35 @@ class JmNetwork {
       return res;
     } else {
       return Res(res.data["msg"]);
+    }
+  }
+
+  Future<Res<bool>> dailyChk() async {
+    try {
+      var res = await get(
+          "$baseUrl/daily?user_id=${jm.data['id']}");
+      var dailyId = res.data['daily_id'];
+      if (res.error) {
+        return Res(null, errorMessage: res.errorMessage);
+      } else if (dailyId == null) {
+        return const Res(null, errorMessage: "daily_id not found");
+      }
+      res = await post(
+          "$baseUrl/daily_chk",
+          "user_id=${jm.data['id']}&daily_id=$dailyId&"
+      );
+      String msg = res.data['msg'];
+      if (res.error) {
+        return Res(null, errorMessage: res.errorMessage);
+      } else if (msg.startsWith("今天已經簽到過了")
+              || msg.contains("Jcoin")
+              || msg.contains("EXP")) {
+        return Res(true, subData: msg);
+      } else {
+        return Res(null, errorMessage: msg);
+      }
+    } catch (e) {
+      return Res(null, errorMessage: e.toString());
     }
   }
 }

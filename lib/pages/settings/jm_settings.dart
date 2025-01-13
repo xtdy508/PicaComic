@@ -23,9 +23,9 @@ class JmSettings extends StatefulWidget {
 
   static const builtInDomains = <String>[
     "www.jmapiproxyxxx.vip",
-    "www.jmapiproxyxxx.me",
-    "www.cdnblackmyth.xyz",
-    "www.cdnxxx-proxy.co"
+    "www.cdnblackmyth.club",
+    "www.cdnmhws.cc",
+    "www.cdnmhwscc.org"
   ];
 
   static void updateApiDomains([bool showLoading = false]) async {
@@ -43,6 +43,15 @@ class JmSettings extends StatefulWidget {
       appdata.appSettings.jmApiDomains = domains!;
       JmNetwork().loginFromAppdata();
     });
+  }
+
+  static void daily([bool showLoading = false]) async {
+    var controller = showLoading ? showLoadingDialog(App.globalContext!) : null;
+    var res = await JmNetwork().dailyChk();
+    controller?.close();
+    var title = res.success ? "签到成功".tl : "签到失败".tl;
+    var msg = res.success ? "${res.subData}".tl : res.errorMessage;
+    showDialogMessage(App.globalContext!, title, msg!);
   }
 }
 
@@ -128,54 +137,14 @@ class _JmSettingsState extends State<JmSettings> {
           onTap: () => JmSettings.updateApiDomains(true),
           trailing: const Icon(Icons.arrow_right),
         ),
+        ListTile(
+          leading: const Icon(Icons.today),
+          title: Text("每日签到".tl),
+          subtitle: Text("点击进行签到".tl),
+          onTap: () => JmSettings.daily(true),
+          trailing: const Icon(Icons.arrow_right),
+        ),
       ],
     );
   }
-
-  // void changeDomain(BuildContext context){
-  //   var controller = TextEditingController();
-  //
-  //   void onFinished() {
-  //     var text = controller.text;
-  //     if(!text.contains("https://")){
-  //       text = "https://$text";
-  //     }
-  //     App.globalBack();
-  //     if(!text.isURL){
-  //       showToast(message: "Invalid URL");
-  //     }else {
-  //       appdata.settings[56] = text;
-  //       appdata.updateSettings();
-  //       setState(() {});
-  //       JmNetwork().loginFromAppdata();
-  //     }
-  //   }
-  //
-  //   showDialog(context: context, builder: (context){
-  //     return SimpleDialog(
-  //       title: const Text("Change Domain"),
-  //       children: [
-  //         Container(
-  //           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-  //           width: 400,
-  //           child: TextField(
-  //             decoration: const InputDecoration(
-  //                 border: OutlineInputBorder(),
-  //                 label: Text("Domain")
-  //             ),
-  //             controller: controller,
-  //             onEditingComplete: onFinished,
-  //           ),
-  //         ),
-  //         Row(
-  //           mainAxisAlignment: MainAxisAlignment.end,
-  //           children: [
-  //             TextButton(onPressed: onFinished, child: Text("完成".tl)),
-  //             const SizedBox(width: 16,),
-  //           ],
-  //         )
-  //       ],
-  //     );
-  //   });
-  // }
 }

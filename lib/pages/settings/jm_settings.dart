@@ -21,7 +21,7 @@ class JmSettings extends StatefulWidget {
   @override
   State<JmSettings> createState() => _JmSettingsState();
 
-  static const builtInDomains = <String>[
+  static const builtInApiDomains = <String>[
     "www.jmapiproxyxxx.vip",
     "www.cdnblackmyth.club",
     "www.cdnmhws.cc",
@@ -30,13 +30,13 @@ class JmSettings extends StatefulWidget {
 
   static void updateApiDomains([bool showLoading = false]) async {
     var controller = showLoading ? showLoadingDialog(App.globalContext!) : null;
-    List<String>? domains = await JmNetwork().getDomains();
+    List<String>? domains = await JmNetwork().getApiDomains();
     controller?.close();
     var title = domains != null ? "更新成功".tl : "更新失败".tl;
     var msg = domains != null ? "" : "${"使用内置域名:".tl}\n";
-    domains = domains ?? builtInDomains;
+    domains = domains ?? builtInApiDomains;
     for (String domain in domains) {
-        msg += "${"分流".tl}${domains.indexOf(domain) + 1}: $domain\n";
+        msg += "${"域名".tl}${domains.indexOf(domain) + 1}: $domain\n";
     }
     msg = msg.trim();
     showConfirmDialog(App.globalContext!, title, msg, () {
@@ -46,6 +46,10 @@ class JmSettings extends StatefulWidget {
   }
 
   static void daily([bool showLoading = false]) async {
+    if (!jm.isLogin && showLoading) {
+      showToast(message: "未登录".tl);
+      return;
+    }
     var controller = showLoading ? showLoadingDialog(App.globalContext!) : null;
     var res = await JmNetwork().dailyChk();
     controller?.close();
@@ -106,13 +110,14 @@ class _JmSettingsState extends State<JmSettings> {
           leading: const Icon(Icons.dns_outlined),
           title: Text("图片分流".tl),
           trailing: Select(
-            initialValue: int.parse(appdata.settings[37]),
+            initialValue: int.parse(appdata.appSettings.jmImgUrlIndex),
             values: [
-              "分流1".tl,"分流2".tl,"分流3".tl,"分流4".tl, "分流5".tl, "分流6".tl
+              "分流1".tl,"分流2".tl,"分流3".tl,"分流4".tl
             ],
             onChange: (i){
               appdata.settings[37] = i.toString();
               appdata.updateSettings();
+              if (jm.isLogin) JmNetwork().updateImgUrl(i + 1);
             },
           ),
         ),
@@ -133,14 +138,13 @@ class _JmSettingsState extends State<JmSettings> {
         ),
         ListTile(
           leading: const Icon(Icons.update_outlined),
-          title: Text("更新分流域名列表".tl),
+          title: Text("更新API域名".tl),
           onTap: () => JmSettings.updateApiDomains(true),
           trailing: const Icon(Icons.arrow_right),
         ),
         ListTile(
           leading: const Icon(Icons.today),
           title: Text("每日签到".tl),
-          subtitle: Text("点击进行签到".tl),
           onTap: () => JmSettings.daily(true),
           trailing: const Icon(Icons.arrow_right),
         ),

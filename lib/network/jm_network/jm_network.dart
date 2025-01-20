@@ -94,6 +94,13 @@ class JmNetwork {
 
   static const kJmSecret = '185Hcomic3PAPP7R';
 
+  static const builtInImgUrls = <String>[
+    "https://cdn-msp3.jmapiproxy1.cc",
+    "https://cdn-msp.jmapiproxy3.cc",
+    "https://cdn-msp2.jmapiproxy2.cc",
+    "https://cdn-msp3.jmapiproxy3.cc"
+  ];
+
   bool _performingLogin = false;
 
   ///解密数据
@@ -126,7 +133,7 @@ class JmNetwork {
     loginFromAppdata();
   }
 
-  Future<List<String>?> getDomains() async {
+  Future<List<String>?> getApiDomains() async {
     var dio = Dio(
       BaseOptions(
         headers: {
@@ -282,6 +289,27 @@ class JmNetwork {
       }
       LogManager.addLog(LogLevel.error, "Network", "$e\n$s");
       return const Res.error("Network Error");
+    }
+  }
+
+  Future<void> updateImgUrl(int index) async {
+    try {
+      var res = await get(
+          "$baseUrl/setting?app_img_shunt=$index"
+      );
+      var url = res.data["img_host"];
+      appdata.settings[86] = url;
+      appdata.updateSettings();
+      LogManager.addLog(LogLevel.info, "Network", "Updated JM Image URL: $url");
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    } catch (e, s) {
+      if (kDebugMode) {
+        print(e);
+      }
+      LogManager.addLog(LogLevel.error, "Network", "$e\n$s");
     }
   }
 
@@ -656,7 +684,7 @@ class JmNetwork {
       var i = await selectDomain();
       if (i != null) {
         appdata.settings[17] = i.toString();
-        LogManager.addLog(LogLevel.info, "Network", "Selected JM API Stream ${i+1}: ${domains[i]}");
+        LogManager.addLog(LogLevel.info, "Network", "Selected JM API Stream ${i + 1}: ${domains[i]}");
       }
     }
     _performingLogin = true;
@@ -672,6 +700,7 @@ class JmNetwork {
       return const Res(true);
     } finally {
       _performingLogin = false;
+      await updateImgUrl(int.parse(appdata.settings[37]) + 1);
     }
   }
 

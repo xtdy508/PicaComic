@@ -133,7 +133,7 @@ class JmNetwork {
     loginFromAppdata();
   }
 
-  Future<List<String>?> getApiDomains() async {
+  Future<Res<dynamic>> getApiDomains() async {
     var dio = Dio(
       BaseOptions(
         headers: {
@@ -149,18 +149,24 @@ class JmNetwork {
           String.fromCharCodes(domainSecret)
       )) as Map<String, dynamic>;
       var urls = List<String>.from(jsonData['Server']);
-      return urls;
+      return Res(urls);
     } on DioException catch (e) {
       if (kDebugMode) {
         print(e);
+      }
+      LogManager.addLog(LogLevel.error, "Network", "$e");
+      if (e.type == DioExceptionType.badResponse) {
+        return Res.error(e.response!.statusCode.toString());
+      } else {
+        return Res.error(e.toString());
       }
     } catch (e, s) {
       if (kDebugMode) {
         print(e);
       }
       LogManager.addLog(LogLevel.error, "Network", "$e\n$s");
+      return Res.error(e.toString());
     }
-    return null;
   }
 
   Future<int?> selectDomain() async {

@@ -1,0 +1,48 @@
+name: Build IOS SIMULATOR
+run-name: Build IOS SIMULATOR
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Build_IOS_SIMULATOR:
+    runs-on: macos-13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          architecture: x64
+
+      - name: Select Xcode
+        run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build for iOS Simulator
+        run: flutter build ios --simulator --no-codesign
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build_files
+          path: ${{ github.workspace }}/build/ios/iphonesimulator
+
+  Deploy_Something:
+    needs: Build_IOS_SIMULATOR      # 等待编译完成
+    runs-on: ubuntu-latest          # 可换成任何 runner
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build_files
+          path: ios-simulator
+
+      - name: List downloaded files
+        run: |
+          echo "Contents of ios-simulator:"
+          ls -R ios-simulator
